@@ -58,7 +58,7 @@ const get_device_token = async (req, res) => {
 
     res.status(200).json({deviceToken: deviceToken})
        }catch(err){
-           res.send({message: 'failed', error: err})
+           res.send({message: 'failed', error: 'device already exist'})
        }
    
    }
