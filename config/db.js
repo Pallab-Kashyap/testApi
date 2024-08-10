@@ -9,16 +9,18 @@
 // })
 
 // module.exports = pool;
+const dotenv = require('dotenv')
+dotenv.config()
 
 const { Pool } = require('pg')
 
 const pool = new Pool({
-    user: 'postgres_nzy6_user',
-    host: 'dpg-cqr45rrqf0us7394fes0-a.oregon-postgres.render.com',
-    database: 'postgres_nzy6',
-    password: 'GP9f2JP6q5m1DA0tONxPH6GhVcgv9Jb8',
-    port: 5432,
+    connectionString: process.env.POSTGRES_URL,
 })
+
+pool.connect()
+    .then(() => console.log('connected pg'))
+    .catch((err) => console.log(err))
 
 // const connect = async() => {
 //     await pool.connect()
