@@ -65,7 +65,7 @@ const checkConnection = async() => {
 // https://testapiserver.onrender.com/
 
 const fn = async() => {
- const  res = await fetch('https://testapiserver.onrender.com/', {
+ const  res = await fetch('https://test-api-weld-psi.vercel.app/', {
     method: 'post',
     headers: {
       "content-type": "application/json",
