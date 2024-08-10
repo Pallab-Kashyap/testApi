@@ -34,11 +34,12 @@ const get_device_token = async (req, res) => {
     const deviceToken =  jwt.sign({username}, jwtSecret, {expiresIn: '7d'})
 
    const registerUserInfo = async () => {
+       try{
     await client.query('BEGIN');
 
     const time = new Date().toISOString();
     const id = Math.floor(Math.random()*1000)
-
+        
         //storing device
         await client.query(deviceQuery, [deviceId, 12, time, username]);
         console.log('1');
@@ -56,6 +57,9 @@ const get_device_token = async (req, res) => {
     console.log('Data updated successfully.');
 
     res.status(200).json({deviceToken: deviceToken})
+       }catch(err){
+           res.send({message: 'failed', error: err})
+       }
    
    }
 
