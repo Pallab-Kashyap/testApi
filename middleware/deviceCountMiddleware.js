@@ -61,6 +61,8 @@ const deleteEarliestDevice = async (username) => {
 
     const {username} = req.body
 
+    if(!username) return res.send({message: 'all fields reqired'});
+
     try{
         const result = await pool.query(deviceCountQuery, [username])
         if(result.rows[0].device_count >= 3){
