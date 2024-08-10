@@ -9,11 +9,11 @@
     "routes": [
         {
             "src": "/",
-            "dest": "/"
+            "dest": "app.js"
         },
         {
             "src": "/home",
-            "dest": "/"
+            "dest": "app.js"
         }
     ]
 }
