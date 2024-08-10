@@ -9,7 +9,7 @@ app.use(cors());
 // app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => res.send('<h1>WELCOME<h1>'));
+app.get('/', (req, res) => res.send('<h1>WELCOME1<h1>'));
 app.get('/home'), (req,res) => res.send('<h1>HOME<h1>');
 app.use('/auth', authRouter)
 app.post('/', (req, res) => res.send({message: 'success'}));
