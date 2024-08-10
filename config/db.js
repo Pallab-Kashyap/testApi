@@ -18,9 +18,9 @@ const pool = new Pool({
     connectionString: process.env.POSTGRES_URL,
 })
 
-pool.connect()
-    .then(() => console.log('connected pg'))
-    .catch((err) => console.log(err))
+// pool.connect()
+//     .then(() => console.log('connected pg'))
+//     .catch((err) => console.log(err))
 
 // const connect = async() => {
 //     await pool.connect()

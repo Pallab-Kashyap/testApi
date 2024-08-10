@@ -77,4 +77,3 @@ const fn = async() => {
  .catch(err => console.log(err))
 }
 
-fn();

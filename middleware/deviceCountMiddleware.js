@@ -14,7 +14,7 @@ const deleteEarliestDevice = async (username) => {
       const earliestDevice = await client.query(`
         SELECT d.id AS device_id, u.value AS user_token_value, r.id AS remote_user_token_id
         FROM Device d
-        JOIN UserToken u ON u.device_name = d.id
+        JOIN UserToken u ON u.device_id = d.id
         JOIN RemoteUserToken r ON r.username = d.username
         WHERE d.username = $1
         ORDER BY d.register_time ASC

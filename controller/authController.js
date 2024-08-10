@@ -82,6 +82,7 @@ const get_device_token = async (req, res) => {
 }
 
 const logout = async (req, res) => {
+
     const client = await pool.connect()
     console.log('ent logout, connected client');
 
@@ -97,14 +98,14 @@ const logout = async (req, res) => {
     const userDevice = await client.query(`
     SELECT d.id AS device_id, u.value AS user_token_value, r.id AS remote_user_token_id
     FROM usertoken u
-    JOIN device d ON d.id = u.device_name
+    JOIN device d ON d.id = u.device_id
     JOIN RemoteUserToken r ON r.username = u.username
     WHERE u.value = $1
     ORDER BY d.register_time ASC
     LIMIT 1
     `, [deviceToken]);
 
-    console.log(userDeviceRes.rows);
+    // console.log(userDevice.rows);
     if (userDevice.rows.length === 0) {
        return res.send({message: 'device not found'})
     }
@@ -150,7 +151,7 @@ const logout = async (req, res) => {
     }
     finally{
         console.log('ext logout');
-        client.release()
+        // client.release()
     }
 }
 
