@@ -2,19 +2,19 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const authRouter = require('./routes/authRoutes');
 const cors = require('cors')
-// const rateLimit = require('express-rate-limit')
+const rateLimit = require('express-rate-limit')
 
 const app = express();
 app.use(cors());
 
 const limiter = rateLimit({
-    max: 2,
+    max: 60,
     windowMs: 60*1000,
     message: 'to many requests'
 })
 
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => res.send('<h1>WELCOME<h1>'));
 app.get('/home', (req,res) => res.send('<h1>HOME<h1>'));
