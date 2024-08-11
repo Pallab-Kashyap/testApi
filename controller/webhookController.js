@@ -43,7 +43,6 @@ const deleteUser = async(req, res) => {
     const { username } = req.body
 
     try{
-
         await pool.query(`
             DELETE FROM users
             WHERE username = $1

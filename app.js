@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 
 const limiter = rateLimit({
-    max: 60,
+    max: 3,
     windowMs: 60*1000,
     message: 'to many requests'
 })
