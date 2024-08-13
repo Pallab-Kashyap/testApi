@@ -56,8 +56,8 @@ const get_device_token = async (req, res) => {
     await client.query(remoteUserTokenQuery, [auth_token, time, username]);
     console.log('1');
     //storing userSyncInfo
-    await client.query(userSyncInfoQuery, [id,time, username]);
-    console.log('1');
+    // await client.query(userSyncInfoQuery, [id,time, username]);
+    // console.log('1');
 
     await client.query('COMMIT');
     console.log('Data updated successfully.');
