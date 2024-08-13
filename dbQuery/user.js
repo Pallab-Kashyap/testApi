@@ -5,9 +5,26 @@ const userTokenQuery = "INSERT INTO usertoken (value, username, time_created, ti
 const deviceQuery = "INSERT INTO device (id, os_type, register_time, username) VALUES ($1, $2, $3, $4)"
 const remoteUserTokenQuery = "INSERT INTO remoteusertoken (value, time_expired, username) VALUES ($1, $2, $3)"
 const userSyncInfoQuery = "INSERT INTO usersyncinfo (id, last_library_sync_time, username) VALUES ($1, $2, $3)"
-const deviceCountQuery = "SELECT COUNT(*) AS device_count FROM device WHERE username = $1"
+const deviceCountQuery = "SELECT * FROM device WHERE username = $1"
 const findAuthTokenQuery = "SELECT value FROM remoteusertoken WHERE username = $1"
 
+// const fun = async ()=> {
+//     try{
+//     const res = await fetch('https://www.osbornebooks.co.uk/api/publications', {
+//         method: 'get',
+//         headers: {
+//             Authorization: 'token 75342937ecc0e1e3c285a824f38de9d2'
+//         }
+//     })
+//     .then(res => res.json())
+//     console.log(res);
+    
+    
+// }catch(err){
+//     console.log('ERROR', err);
+// }
+// }
+// fun()
 
 module.exports = {
     addUserQuery,

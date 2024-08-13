@@ -1,66 +1,68 @@
 const { addUserQuery,findUserQuery,userSyncInfoQuery,deviceQuery,userTokenQuery,remoteUserTokenQuery } = require('../dbQuery/user')
 const pool = require('../config/db')
 const jwt = require('jsonwebtoken');
-
+const auth = require('../middleware/auth');
+const Buffer = require('buffer').Buffer
 
 const get_device_token = async (req, res) => {
     const client = await pool.connect();
-
-    try{
     const { username, password, deviceId } = req.body;
-
     const credentials = `${username}:${password}`;
-
     const base64EncodedCredentials = Buffer.from(credentials).toString('base64');
     const authHeader = `Basic ${base64EncodedCredentials}`;
-    
-    // const axios = require('axios');
-    
-    // axios.get('api endpoint', {
-    //   headers: {
-    //     'Authorization': authHeader
-    //   }
-    // })
-    // .then(async (response) => {
-    // })
-    // .catch(error => {
-    //   console.error(error);
-    // });
+    console.log(authHeader);
 
-    const auth_token = 'authToken'
+    try{
+    
+    const result = await fetch('https://www.osbornebooks.co.uk/api/get_auth_token', {
+      method: 'get',
+      headers: {
+        "Authorization": authHeader
+      }
+    })
+    .then((result) => result.json())
+    .catch(err => {
+      console.log(err)
+      return res.send({message: 'osborne err'})
+    })
+
+    if(result.token === null){
+      return res.send({message: "wrong credentials"})
+    }
+    
+    const auth_token = result.token;
+    const expire = result.expired;
         
-
-    const jwtSecret = 'aofeooieoeowjwoow'
-    const deviceToken =  jwt.sign({username}, jwtSecret, {expiresIn: '7d'})
-
-   const registerUserInfo = async () => {
-       try{
+    const registerUserInfo = async () => {
+     const jwtSecret = 'aofeooieoeowjwoow'
+     const deviceToken =  jwt.sign({username}, jwtSecret, {expiresIn: '7d'})
+    
     await client.query('BEGIN');
 
-    const time = new Date().toISOString();
-    const id = Math.floor(Math.random()*1000)
+    const date = new Date(expire * 1000);
+    const id = Math.floor(Math.random() * 1000);
+
+// Convert to ISO 8601 string (timestamptz format)
+    const time = date.toISOString();
+    
         
-        //storing device
-        await client.query(deviceQuery, [deviceId, 12, time, username]);
-        console.log('1');
+    //storing device
+    await client.query(deviceQuery, [deviceId, 12, time, username]);
+    console.log('1');
     //storing deviceToken(device_token)
     await client.query(userTokenQuery, [deviceToken, username, time, time, deviceId]);
     console.log('1');
     //storing remoteUserToken(auth_token)
     await client.query(remoteUserTokenQuery, [auth_token, time, username]);
     console.log('1');
-
     //storing userSyncInfo
     await client.query(userSyncInfoQuery, [id,time, username]);
     console.log('1');
+
     await client.query('COMMIT');
     console.log('Data updated successfully.');
 
-    res.status(200).json({deviceToken: deviceToken})
-       }catch(err){
-           res.send({message: 'failed', error: 'device already exist'})
-       }
-   
+     return res.status(200).json({deviceToken: deviceToken})
    }
 
 
@@ -70,15 +72,14 @@ const get_device_token = async (req, res) => {
         registerUserInfo();
     }else{
         const user = await pool.query(addUserQuery, [username])
-        if(user.rows.length === 0) return res.send({message: 'user already exist'})
-        registerUserInfo();
+        if(user.rows.length === 0) return res.send({message: 'something went wrong'})
+          registerUserInfo();
+      }
     }
-}
-
-
-}catch(error){
-    res.status(400).json({message: 'something went wrong'})
-    console.log(error);
+  }
+catch(error){
+  console.log(error);
+    return res.status(400).json({message: 'something went wrong'})
     // throw error
 }finally {
     client.release(); 
@@ -146,16 +147,16 @@ const logout = async (req, res) => {
 
     await client.query('COMMIT');
     console.log('sent res success');
-    res.json({message: `${username} with device ${device_id} logout`})
+    return res.json({message: `${username} with device ${device_id} logout`})
 
     }catch(error){
         console.log(error);
-        res.send({message: 'something went wrong'})
-        console.log('error');
+       return  res.send({message: 'something went wrong'})
+      
     }
     finally{
         console.log('ext logout');
-        // client.release()
+        client.release()
     }
 }
 
