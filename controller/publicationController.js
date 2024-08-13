@@ -10,7 +10,6 @@ const fetchPublications = async (req,res)=>{
     const username = req.username
     console.log('AUTH' , auth_token);
     try{
-        
         const response = await fetch('https://www.osbornebooks.co.uk/api/publications', {
             method: 'get',
             headers: {
@@ -30,6 +29,7 @@ const fetchPublications = async (req,res)=>{
 
         // console.log(response.results);
         await client.query('BEGIN')
+        console.log(response);
         if(response.results.length > 0){
             const publicationValues = response.results.map(pub => [
                 pub.urlId,

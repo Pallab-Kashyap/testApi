@@ -6,7 +6,7 @@ const deviceQuery = "INSERT INTO device (id, os_type, register_time, username) V
 const remoteUserTokenQuery = "INSERT INTO remoteusertoken (value, time_expired, username) VALUES ($1, $2, $3)"
 const userSyncInfoQuery = "INSERT INTO usersyncinfo (id, last_library_sync_time, username) VALUES ($1, $2, $3)"
 const deviceCountQuery = "SELECT * FROM device WHERE username = $1"
-const findAuthTokenQuery = "SELECT value FROM remoteusertoken WHERE username = $1"
+const findAuthTokenQuery = "SELECT * FROM remoteusertoken WHERE username = $1 ORDER BY created_at DESC LIMIT 1"
 
 // const fun = async ()=> {
 //     try{
