@@ -10,17 +10,17 @@ const fetchPublications = async (req,res)=>{
     const username = req.username
     console.log('AUTH' , auth_token);
     try{
-        // const response = await axios({
-        //     methord:'get',
-        //     URL:'/publications',  // Endpoint URL (baseURL is already set)
-        // })
-
+        
         const response = await fetch('https://www.osbornebooks.co.uk/api/publications', {
             method: 'get',
             headers: {
                 Authorization: `token ${auth_token}`
             }
         })
+        // const response = await axios({
+        //     methord:'get',
+        //     URL:'/publications',  // Endpoint URL (baseURL is already set)
+        // })
         .then(response => response.json())
         .catch(err => {
             console.log(err);
@@ -58,7 +58,7 @@ const fetchPublications = async (req,res)=>{
                 username, pub.urlId
               ]);
           
-              console.log('fiencievneoq;ifjioqeekffffffffffffffffffffffff');
+
               // Upsert into publicationreader table
               const insertPublicationReaderQuery = `
                 INSERT INTO publicationreader (username, publication_id)
