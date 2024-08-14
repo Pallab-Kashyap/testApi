@@ -1,9 +1,25 @@
 const checkServerToken = (req, res, next) => {
-    // const { server_token } = req.body;
+    // const {Authorization} = req.headers
 
-    // if(!server_token) return res.status(400).send({message: 'server token required'})
+    // const server_token = abc;
+    // if(Authorization && Authorization.startsWith('token')){
+    //     const serverToken = Authorization.split(' ')[1];
 
-    //verify token
+    //     if(serverToken){
+    //         if(serverToken === server_token){
+    //             next();
+    //         }
+    //         else{
+    //             res.send({status: false, message: 'wrong server token'})
+    //         }
+    //     }else{
+    //         res.send({status: false, message: 'server_token needed'})
+    //     }
+    // }else{
+    //     return res.send({status: false, message: 'server_token needed'})
+    // }
+
+
     next()
 }
 

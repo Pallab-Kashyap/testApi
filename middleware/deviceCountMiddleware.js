@@ -1,8 +1,6 @@
-const { logger } = require("sequelize/lib/utils/logger");
 const pool = require("../config/db");
 const { deviceCountQuery } = require("../dbQuery/user");
 const jwt = require('jsonwebtoken');
-const { cloneDeep } = require("sequelize/lib/utils");
 
 const deleteEarliestDevice = async (username) => {
   const client = await pool.connect();
@@ -74,6 +72,7 @@ const deviceCount = async (req, res, next) => {
   try {
 
     //fetching user devices
+    console.log('got req in devcount');
     const result = await pool.query(deviceCountQuery, [username]);
 console.log('got result');
 
