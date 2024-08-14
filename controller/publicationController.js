@@ -8,95 +8,95 @@ const fetchPublications = async (req,res)=>{
 
     const auth_token = req.authToken
     const username = req.username
-    console.log('AUTH' , auth_token);
-    // try{
-    //     const result = await pool.query(`
-    //         select * from publication
-    //         where username = $1
-    //         `, [username])
 
-    //         if(result.rowCount > 0){
-    //             console.log('ret from mas');
-    //             return res.send({result: result.rows})
-    //         }
-    // }catch(error){
-    //     console.log(error);
-    //     return res.send({error})
-    // }
+
+    //TODO: check MAS db if publication exits
+
+
+
     try{
-        const response = await fetch('https://www.osbornebooks.co.uk/api/publications', {
-            method: 'get',
-            headers: {
-                Authorization: `token ${auth_token}`
-            }
-        })
-        // const response = await axios({
-        //     methord:'get',
-        //     URL:'/publications',  // Endpoint URL (baseURL is already set)
+        // const response = await fetch('https://www.osbornebooks.co.uk/api/publications', {
+        //     method: 'get',
+        //     headers: {
+        //         Authorization: `token ${auth_token}`
+        //     }
         // })
-        .then(response => response.json())
-        .catch(err => {
-            console.log(err);
-            return res.send({message: 'something went wrong'})
-        })
+  
+        // .then(response => response.json())
+        // .catch(err => {
+        //     console.log(err);
+        //     return res.send({message: 'something went wrong'})
+        // })
         // res.status(200).json(response.data);
 
+        const result = await pool.query(`
+            SELECT p.*
+            FROM publicationreader pr
+            JOIN publication p ON pr.publication_id = p.url_id
+            WHERE pr.username = $1;
+            `,[username])
 
-        await client.query('BEGIN')
-        if(response.results.length > 0){
-            const publicationValues = response.results.map(pub => [
-                pub.urlId,
-                pub.title,
-                pub.description,
-                pub.cover,
-                pub.urlPath,
-                new Date(pub.created_at * 1000).toISOString(),  
-                new Date(pub.updated_at * 1000).toISOString(), 
-                pub.metadata
-              ]);
+            if(result.rowCount > 0){
+                return res.send({status: true, result: result.rows})
+            }
+            return res.send({status: false, message: 'no publications avilable'})
+
+
+        // await client.query('BEGIN')
+        // if(response.results.length > 0){
+        //     const publicationValues = response.results.map(pub => [
+        //         pub.urlId,
+        //         pub.title,
+        //         pub.description,
+        //         pub.cover,
+        //         pub.urlPath,
+        //         new Date(pub.created_at * 1000).toISOString(),  
+        //         new Date(pub.updated_at * 1000).toISOString(), 
+        //         pub.metadata
+        //       ]);
           
-              // Upsert publications: Insert new ones or do nothing if they exist
-              const insertPublicationsQuery = `
-                INSERT INTO publication (url_id, title, description, cover_url, path_url, created_at, updated_at, metadata)
-                VALUES
-                ${publicationValues.map((_, i) => `($${i * 8 + 1}, $${i * 8 + 2}, $${i * 8 + 3}, $${i * 8 + 4}, $${i * 8 + 5}, $${i * 8 + 6}, $${i * 8 + 7}, $${i * 8 + 8})`).join(', ')} 
-                ON CONFLICT (url_id) DO UPDATE SET 
-                    title = excluded.title,
-                    description = excluded.description,
-                    cover_url = excluded.cover_url,
-                    path_url = excluded.path_url,
-                    created_at = excluded.created_at,
-                    updated_at = excluded.updated_at
-              `;
+        //       // Upsert publications: Insert new ones or do nothing if they exist
+        //       const insertPublicationsQuery = `
+        //         INSERT INTO publication (url_id, title, description, cover_url, path_url, created_at, updated_at, metadata)
+        //         VALUES
+        //         ${publicationValues.map((_, i) => `($${i * 8 + 1}, $${i * 8 + 2}, $${i * 8 + 3}, $${i * 8 + 4}, $${i * 8 + 5}, $${i * 8 + 6}, $${i * 8 + 7}, $${i * 8 + 8})`).join(', ')} 
+        //         ON CONFLICT (url_id) DO UPDATE SET 
+        //             title = excluded.title,
+        //             description = excluded.description,
+        //             cover_url = excluded.cover_url,
+        //             path_url = excluded.path_url,
+        //             created_at = excluded.created_at,
+        //             updated_at = excluded.updated_at
+        //       `;
           
-              const flatPublicationValues = publicationValues.flat();
-              await client.query(insertPublicationsQuery, flatPublicationValues);
-          console.log('comp')
-              // Prepare data for the publicationreader table
-              const publicationReaderValues = response.results.map(pub => [
-                username, pub.urlId
-              ]);
+        //       const flatPublicationValues = publicationValues.flat();
+        //       await client.query(insertPublicationsQuery, flatPublicationValues);
+        //   console.log('comp')
+        //       // Prepare data for the publicationreader table
+        //       const publicationReaderValues = response.results.map(pub => [
+        //         username, pub.urlId
+        //       ]);
           
 
-              // Upsert into publicationreader table
-              const insertPublicationReaderQuery = `
-                INSERT INTO publicationreader (username, publication_id)
-                VALUES
-                ${publicationReaderValues.map((_, i) => `($${i * 2 + 1}, $${i * 2 + 2})`).join(', ')}
-                ON CONFLICT (username, publication_id) DO NOTHING
-              `;
+        //       // Upsert into publicationreader table
+        //       const insertPublicationReaderQuery = `
+        //         INSERT INTO publicationreader (username, publication_id)
+        //         VALUES
+        //         ${publicationReaderValues.map((_, i) => `($${i * 2 + 1}, $${i * 2 + 2})`).join(', ')}
+        //         ON CONFLICT (username, publication_id) DO NOTHING
+        //       `;
           
-              const flatPublicationReaderValues = publicationReaderValues.flat();
-              await client.query(insertPublicationReaderQuery, flatPublicationReaderValues);    
+        //       const flatPublicationReaderValues = publicationReaderValues.flat();
+        //       await client.query(insertPublicationReaderQuery, flatPublicationReaderValues);    
           
-              await client.query('COMMIT');
-              console.log('Publications stored and reader mappings updated successfully.');
-              return res.send(response.results)
+        //       await client.query('COMMIT');
+        //       console.log('Publications stored and reader mappings updated successfully.');
+        //       return res.send(response.results)
 
-        }
-        else{
-            res.send({message: 'no publications found'})
-        }
+        // }
+        // else{
+        //     res.send({message: 'no publications found'})
+        // }
     }catch(err){
         await client.query('ROLLBACK');
         console.log(err);

@@ -25,9 +25,9 @@ const auth = async (req, res, next) => {
                         req.deviceToken = token
                         req.username = username
 
-                        if(exp < currentTime){
-                            return res.send({message: 'auth_token expired'})
-                        }
+                        // if(exp < currentTime){
+                        //     return res.send({status: false, message: 'auth_token expired'})
+                        // }
                     }
                     else{
                       return res.send({message: 'auth token not found'})
