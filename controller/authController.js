@@ -1,4 +1,4 @@
-const { addUserQuery,findUserQuery,userSyncInfoQuery,clearRemoteTokenQuery,deviceQuery,userTokenQuery,remoteUserTokenQuery } = require('../dbQuery/user')
+const { addUserQuery,findUserQuery,userSyncInfoQuery,clearRemoteTokenQuery,updateRemoteUserTokenQuery,deviceQuery,userTokenQuery,remoteUserTokenQuery } = require('../dbQuery/user')
 const pool = require('../config/db')
 const jwt = require('jsonwebtoken');
 const auth = require('../middleware/auth');
@@ -52,10 +52,10 @@ const get_device_token = async (req, res) => {
     //storing deviceToken(device_token)
     await client.query(userTokenQuery, [deviceToken, username, time, time, deviceId]);
     console.log('1');
-    //clearing expiredToken(auth_token)
-    // await client.query(clearRemoteTokenQuery, [username])
+    // clearing expiredToken(auth_token)
+    await client.query(remoteUserTokenQuery, [auth_token, time, username])
     //storing remoteUserToken(auth_token)
-    await client.query(remoteUserTokenQuery, [auth_token, time, username, username]);
+    await client.query(updateRemoteUserTokenQuery, [auth_token, time, username, username]);
     console.log('1');
     //storing userSyncInfo
     // await client.query(userSyncInfoQuery, [id,time, username]);

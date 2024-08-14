@@ -1,5 +1,4 @@
 const pool = require('../config/db');
-const auth = require('../middleware/auth');
 
 const removeUserAuthToken = async(req, res) => {
     const client = await pool.connect();
