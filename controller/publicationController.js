@@ -9,6 +9,20 @@ const fetchPublications = async (req,res)=>{
     const auth_token = req.authToken
     const username = req.username
     console.log('AUTH' , auth_token);
+    // try{
+    //     const result = await pool.query(`
+    //         select * from publication
+    //         where username = $1
+    //         `, [username])
+
+    //         if(result.rowCount > 0){
+    //             console.log('ret from mas');
+    //             return res.send({result: result.rows})
+    //         }
+    // }catch(error){
+    //     console.log(error);
+    //     return res.send({error})
+    // }
     try{
         const response = await fetch('https://www.osbornebooks.co.uk/api/publications', {
             method: 'get',
@@ -27,7 +41,7 @@ const fetchPublications = async (req,res)=>{
         })
         // res.status(200).json(response.data);
 
-        // console.log(response.results);
+        console.log(response);
         await client.query('BEGIN')
         console.log(response);
         if(response.results.length > 0){
