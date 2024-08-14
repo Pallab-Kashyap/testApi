@@ -41,9 +41,8 @@ const fetchPublications = async (req,res)=>{
         })
         // res.status(200).json(response.data);
 
-        console.log(response);
+
         await client.query('BEGIN')
-        console.log(response);
         if(response.results.length > 0){
             const publicationValues = response.results.map(pub => [
                 pub.urlId,
@@ -61,12 +60,18 @@ const fetchPublications = async (req,res)=>{
                 INSERT INTO publication (url_id, title, description, cover_url, path_url, created_at, updated_at, metadata)
                 VALUES
                 ${publicationValues.map((_, i) => `($${i * 8 + 1}, $${i * 8 + 2}, $${i * 8 + 3}, $${i * 8 + 4}, $${i * 8 + 5}, $${i * 8 + 6}, $${i * 8 + 7}, $${i * 8 + 8})`).join(', ')} 
-                ON CONFLICT (url_id) DO NOTHING
+                ON CONFLICT (url_id) DO UPDATE SET 
+                    title = excluded.title,
+                    description = excluded.description,
+                    cover_url = excluded.cover_url,
+                    path_url = excluded.path_url,
+                    created_at = excluded.created_at,
+                    updated_at = excluded.updated_at
               `;
           
               const flatPublicationValues = publicationValues.flat();
               await client.query(insertPublicationsQuery, flatPublicationValues);
-          
+          console.log('comp')
               // Prepare data for the publicationreader table
               const publicationReaderValues = response.results.map(pub => [
                 username, pub.urlId

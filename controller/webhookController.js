@@ -71,8 +71,7 @@ const updateUserPublication = async(req, res) => {
         }
 
         const authToken = auth_token.rows[0].value
-        //fetch publication
-        //save publication
+
 
         res.send({message: 'success', authToken: authToken})
     }catch{
