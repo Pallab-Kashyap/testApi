@@ -53,9 +53,9 @@ const get_device_token = async (req, res) => {
     await client.query(userTokenQuery, [deviceToken, username, time, time, deviceId]);
     console.log('1');
     //clearing expiredToken(auth_token)
-    await client.query(clearRemoteTokenQuery, [username])
+    // await client.query(clearRemoteTokenQuery, [username])
     //storing remoteUserToken(auth_token)
-    await client.query(remoteUserTokenQuery, [auth_token, time, username]);
+    await client.query(remoteUserTokenQuery, [auth_token, time, username, username]);
     console.log('1');
     //storing userSyncInfo
     // await client.query(userSyncInfoQuery, [id,time, username]);
