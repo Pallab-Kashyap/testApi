@@ -16,8 +16,14 @@ const auth = async (req, res, next) => {
     
                  if(username){
                     console.log('USERNAME: ', username);
+                    const user = await pool.query(`
+                        SELECT * FROM usertoken
+                        WHERE value = $1
+                        `,[token])
+                    
+                    if(!(user.rows.length > 0)) return res.send({status: false, message: 'user not registered'})
                     const authToken = await pool.query(findAuthTokenQuery, [username])
-                    console.log(authToken.rows);
+
                     if(authToken.rows.length > 0){
                         const exp = authToken.rows[0].time_expired
                         const currentTime = new Date();
@@ -30,7 +36,7 @@ const auth = async (req, res, next) => {
                         }
                     }
                     else{
-                      return res.send({message: 'auth token not found'})
+                      return res.send({status: false, message: 'auth token invalid'})
                     }
                  }
                  
@@ -39,11 +45,11 @@ const auth = async (req, res, next) => {
             }
             catch(error){
                 console.log(error);
-                res.send({status: 'failed', message: 'not a valid user'})
+                res.send({status: false, message: error})
             }
         }
         else{
-            res.send({status: 'failed', message: 'no token'})
+            res.send({status: false, message: 'no token'})
         }
     }
 

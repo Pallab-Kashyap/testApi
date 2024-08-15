@@ -1,6 +1,6 @@
 const pool = require("../config/db");
 const { deviceCountQuery } = require("../dbQuery/user");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 const deleteEarliestDevice = async (username) => {
   const client = await pool.connect();
@@ -26,7 +26,8 @@ const deleteEarliestDevice = async (username) => {
       return res.send({ message: "hit device limit but no device found" });
     }
 
-    const { device_id, user_token_value, remote_user_token_id } = earliestDevice.rows[0];
+    const { device_id, user_token_value, remote_user_token_id } =
+      earliestDevice.rows[0];
 
     //Delete from UserToken
     await client.query(
@@ -68,34 +69,35 @@ const deviceCount = async (req, res, next) => {
   const { username, deviceId } = req.body;
 
   if (!username) return res.send({ message: "all fields reqired" });
-    console.log('username' , username);
+  console.log("username", username);
   try {
-
     //fetching user devices
-    console.log('got req in devcount');
+    console.log("got req in devcount");
     const result = await pool.query(deviceCountQuery, [username]);
-console.log('got result');
 
     //if user have device registered
     if (result.rows.length > 0) {
-    console.log('have devices', result.rows.length);
+      console.log("have devices", result.rows.length);
       //chechking if user already registered with device id
       let deviceFound = false;
       for (const device of result.rows) {
         if (device.id === deviceId) {
           deviceFound = true;
-          console.log('div === div');
-          const authToken = await pool.query(`
+          console.log("div === div");
+          const authToken = await pool.query(
+            `
             SELECT time_expired FROM remoteusertoken
             WHERE username = $1 
-            `, [username])
+            `,
+            [username]
+          );
 
-            // console.log('auth', authToken);
+          // console.log('auth', authToken);
 
-            if(authToken.rowCount > 0){
-              if(authToken.rows[0].time_expired <= new Date()) return next();
-            }
-          console.log('device id matched');
+          if (authToken.rowCount > 0) {
+            if (authToken.rows[0].time_expired <= new Date()) return next();
+          }
+          console.log("device id matched");
           const jwtSecret = "aofeooieoeowjwoow";
           const deviceToken = jwt.sign({ username }, jwtSecret, {
             expiresIn: "7d",
@@ -110,41 +112,39 @@ console.log('got result');
               `,
               [deviceToken, deviceId, username]
             );
-            if (result.rows)
-              console.log('sent res');
-              return res.send({ message: "success", deviceToken: deviceToken });
+            if (result.rows) console.log("sent res");
+            return res.send({ status: true , deviceToken: deviceToken });
           } catch (err) {
-              console.log(err);
-              return res.send({ message: "something went wrong" });
+            console.log(err);
+            return res.send({ status: false, message: "something went wrong" });
           }
         }
-      };
+      }
       //the device id didn't matched any device stored in db
-console.log('no device found');
+      console.log("no device found");
       //if user reaches device limit logingout earliest device
-      if(!deviceFound){
-      if (result.rows.length >= 3) {
-        await deleteEarliestDevice(username);
-       console.log('next');
-        next();
-        return;
+      if (!deviceFound) {
+        if (result.rows.length >= 3) {
+          await deleteEarliestDevice(username);
+          console.log("next");
+          next();
+          return;
+        } else {
+          console.log("next");
+          next();
+          return;
+        }
       }
-      else{
-        console.log('next');
-        next();
-        return;
-      }
-    } 
-  }
+    }
     //if user don't have any devices goes to register new device
     else {
-      console.log('next');
+      console.log("next");
       next();
       return;
     }
   } catch (error) {
     console.log(error);
-    return res.status(500).send({message: 'internal server error'})
+    return res.status(500).send({ status: false, message: "internal server error" });
   }
 };
 
