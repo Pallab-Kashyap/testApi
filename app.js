@@ -4,7 +4,8 @@ const authRouter = require('./routes/authRoutes');
 const cors = require('cors')
 const rateLimit = require('express-rate-limit')
 const webhookRouter = require('./routes/webhookRoutes')
-const publicationRouter = require('./routes/publicationRoutes')
+const publicationRouter = require('./routes/publicationRoutes');
+const { testPub } = require('./controller/publicationController');
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,7 @@ app.get('/testLimit', limiter, (req, res) => res.send({message: 'success'}));
 app.use('/api/auth', authRouter)
 app.use('/api/webhook', webhookRouter)
 app.use('/api/publications', publicationRouter)
+app.use('/api/testPub', testPub)
 app.use((req, res, next) => {
     res.status(404).render('404', { title: '404 Not Found' }); // Render a custom 404 page
 });

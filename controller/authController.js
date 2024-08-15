@@ -1,7 +1,6 @@
 const { addUserQuery,findUserQuery,userSyncInfoQuery,clearRemoteTokenQuery,updateRemoteUserTokenQuery,deviceQuery,userTokenQuery,remoteUserTokenQuery } = require('../dbQuery/user')
 const pool = require('../config/db')
 const jwt = require('jsonwebtoken');
-const auth = require('../middleware/auth');
 const Buffer = require('buffer').Buffer
 
 const get_device_token = async (req, res) => {
@@ -10,7 +9,6 @@ const get_device_token = async (req, res) => {
     const credentials = `${username}:${password}`;
     const base64EncodedCredentials = Buffer.from(credentials).toString('base64');
     const authHeader = `Basic ${base64EncodedCredentials}`;
-    console.log(authHeader);
 
     try{
     
