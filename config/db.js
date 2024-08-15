@@ -9,8 +9,6 @@
 // })
 
 // module.exports = pool;
-const dotenv = require('dotenv')
-dotenv.config()
 
 const { Pool } = require('pg')
 

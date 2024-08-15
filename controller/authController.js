@@ -14,61 +14,64 @@ const { stat } = require("fs");
 const { STATUS_CODES } = require("http");
 const Buffer = require("buffer").Buffer;
 
-
-const registerUserInfo = async (res, username, expire, deviceId, auth_token) => {
+const registerUserInfo = async (
+  res,
+  username,
+  expire,
+  deviceId,
+  auth_token
+) => {
   const client = await pool.connect();
 
-  try{
-  const jwtSecret = "aofeooieoeowjwoow";
-  const deviceToken = jwt.sign({ username }, jwtSecret, {
-    expiresIn: "7d",
-  });
+  try {
+    const deviceToken = jwt.sign({ username }, process.env.JWT_SECRET_KEY, {
+      expiresIn: "7d",
+    });
 
-  await client.query("BEGIN");
+    await client.query("BEGIN");
 
-  const date = new Date(expire * 1000);
-  const id = Math.floor(Math.random() * 1000);
+    const date = new Date(expire * 1000);
+    const id = Math.floor(Math.random() * 1000);
 
-  // Convert to ISO 8601 string (timestamptz format)
-  const time = date.toISOString();
+    // Convert to ISO 8601 string (timestamptz format)
+    const time = date.toISOString();
 
-  //storing device
-  await client.query(deviceQuery, [deviceId, 12, time, username]);
-  console.log("1");
-  //storing deviceToken(device_token)
-  await client.query(userTokenQuery, [
-    deviceToken,
-    username,
-    time,
-    time,
-    deviceId,
-  ]);
-  console.log("1");
-  // clearing expiredToken(auth_token)
-  await client.query(remoteUserTokenQuery, [auth_token, time, username]);
-  //storing remoteUserToken(auth_token)
-  await client.query(updateRemoteUserTokenQuery, [
-    auth_token,
-    time,
-    username,
-    username,
-  ]);
-  console.log("1");
-  //storing userSyncInfo
-  // await client.query(userSyncInfoQuery, [id,time, username]);
-  // console.log('1');
+    //storing device
+    await client.query(deviceQuery, [deviceId, 12, time, username]);
+    console.log("1");
+    //storing deviceToken(device_token)
+    await client.query(userTokenQuery, [
+      deviceToken,
+      username,
+      time,
+      time,
+      deviceId,
+    ]);
+    console.log("1");
+    // clearing expiredToken(auth_token)
+    await client.query(remoteUserTokenQuery, [auth_token, time, username]);
+    //storing remoteUserToken(auth_token)
+    await client.query(updateRemoteUserTokenQuery, [
+      auth_token,
+      time,
+      username,
+      username,
+    ]);
+    console.log("1");
+    //storing userSyncInfo
+    // await client.query(userSyncInfoQuery, [id,time, username]);
+    // console.log('1');
 
-  await client.query("COMMIT");
-  console.log("Data updated successfully.");
+    await client.query("COMMIT");
+    console.log("Data updated successfully.");
 
-  return res.status(200).json({status: true, deviceToken: deviceToken });
-}catch(error){
-  console.log(error);
-  return res.send({status: false, message: error})
-}
-finally{
-  client.release()
-}
+    return res.status(200).json({ status: true, deviceToken: deviceToken });
+  } catch (error) {
+    console.log(error);
+    return res.send({ status: false, message: error });
+  } finally {
+    client.release();
+  }
 };
 
 const get_device_token = async (req, res) => {
@@ -126,9 +129,8 @@ const logout = async (req, res) => {
 
   if (authorization && authorization.startsWith("Bearer")) {
     let deviceToken = authorization.split(" ")[1];
-    const jwtSecret = "aofeooieoeowjwoow";
 
-    const { username } = jwt.verify(deviceToken, jwtSecret);
+    const { username } = jwt.verify(deviceToken, process.env.JWT_SECRET_KEY);
 
     if (!username) return res.send({ message: "invalid device token" });
 
@@ -207,8 +209,6 @@ const logout = async (req, res) => {
     }
   }
 };
-
-
 
 module.exports = {
   get_device_token,

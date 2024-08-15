@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const axiosInstance = axios.create({
-    basebaseURL: 'https://www.osbornebooks.co.uk',  // Base URL for all requests
+    basebaseURL: process.env.OSBORNE_URL,  // Base URL for all requests
     timeout: 5000,  // Set a timeout of 5 seconds
     headers: {
         'Content-Type': 'application/json',  // Default Content-Type

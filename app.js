@@ -6,9 +6,10 @@ const rateLimit = require('express-rate-limit')
 const webhookRouter = require('./routes/webhookRoutes')
 const publicationRouter = require('./routes/publicationRoutes');
 const { testPub } = require('./controller/publicationController');
+const dotenv = require('dotenv')
 
+dotenv.config()
 const app = express();
-app.use(cors());
 
 const limiter = rateLimit({
     max: 3,
@@ -16,6 +17,7 @@ const limiter = rateLimit({
     message: 'to many requests'
 })
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

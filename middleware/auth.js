@@ -10,9 +10,9 @@ const auth = async (req, res, next) => {
     if(authorization && authorization.startsWith('Bearer')){
             try{
                 let token = authorization.split(' ')[1];
-                const jwtSecret = 'aofeooieoeowjwoow'
+                
     
-                const { username }  = jwt.verify(token, jwtSecret)
+                const { username }  = jwt.verify(token, process.env.JWT_SECRET_KEY)
     
                  if(username){
                     console.log('USERNAME: ', username);

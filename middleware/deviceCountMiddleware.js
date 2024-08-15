@@ -98,8 +98,8 @@ const deviceCount = async (req, res, next) => {
             if (authToken.rows[0].time_expired <= new Date()) return next();
           }
           console.log("device id matched");
-          const jwtSecret = "aofeooieoeowjwoow";
-          const deviceToken = jwt.sign({ username }, jwtSecret, {
+
+          const deviceToken = jwt.sign({ username }, process.env.JWT_SECRET_KEY, {
             expiresIn: "7d",
           });
           try {
