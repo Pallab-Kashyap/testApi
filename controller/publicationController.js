@@ -7,15 +7,8 @@ const fetchPublications = async (req,res)=>{
 
     const auth_token = req.authToken
     const username = req.username
-
-
     //TODO: check MAS db if publication exits
-
-
-
     try{
-
-
         const result = await pool.query(`
             SELECT p.*
             FROM publicationreader pr
@@ -34,13 +27,11 @@ const fetchPublications = async (req,res)=>{
                     Authorization: `token ${auth_token}`
                 }
             })
-      
             .then(response => response.json())
             .catch(err => {
                 console.log(err);
                 return res.send({message: 'something went wrong'})
             })
-            res.status(200).json(response.data);
 
         await client.query('BEGIN')
         if(response.results.length > 0){
@@ -95,12 +86,12 @@ const fetchPublications = async (req,res)=>{
 
         }
         else{
-            res.send({message: 'no publications found'})
+            return res.send({message: 'no publications found'})
         }
     }catch(err){
         await client.query('ROLLBACK');
         console.log(err);
-        res.status(500).json({msg:'failed to fetch data'});
+        return res.status(500).json({msg:'failed to fetch data'});
     }
     finally{
         client.release();

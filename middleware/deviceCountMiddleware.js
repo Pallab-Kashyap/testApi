@@ -68,7 +68,7 @@ const deviceCount = async (req, res, next) => {
   const { username, deviceId } = req.body;
 
   if (!username) return res.send({ message: "all fields reqired" });
-
+    console.log('username' , username);
   try {
 
     //fetching user devices
@@ -78,13 +78,23 @@ console.log('got result');
 
     //if user have device registered
     if (result.rows.length > 0) {
-console.log('have devices', result.rows.length);
+    console.log('have devices', result.rows.length);
       //chechking if user already registered with device id
       let deviceFound = false;
       for (const device of result.rows) {
         if (device.id === deviceId) {
-
           deviceFound = true;
+          console.log('div === div');
+          const authToken = await pool.query(`
+            SELECT time_expired FROM remoteusertoken
+            WHERE username = $1 
+            `, [username])
+
+            // console.log('auth', authToken);
+
+            if(authToken.rowCount > 0){
+              if(authToken.rows[0].time_expired <= new Date()) return next();
+            }
           console.log('device id matched');
           const jwtSecret = "aofeooieoeowjwoow";
           const deviceToken = jwt.sign({ username }, jwtSecret, {

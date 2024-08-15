@@ -37,7 +37,6 @@ const removeUserAuthToken = async(req, res) => {
     }
 }
 
-
 const deleteUser = async(req, res) => {
     const { username } = req.body
 
@@ -53,7 +52,6 @@ const deleteUser = async(req, res) => {
         res.send({message: 'something went wrong'})
     }
 }
-
 
 const updateUserPublication = async(req, res) => {
     const { username } = req.body

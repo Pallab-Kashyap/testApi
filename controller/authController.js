@@ -88,13 +88,20 @@ catch(error){
 
 const logout = async (req, res) => {
 
+  const {authorization} = req.headers;
+
+    if(authorization && authorization.startsWith('Bearer')){
+                let deviceToken = authorization.split(' ')[1];
+                const jwtSecret = 'aofeooieoeowjwoow'
+    
+                const { username }  = jwt.verify(deviceToken, jwtSecret)
+
+                if(!username) return res.send({message: 'invalid device token'})
+
     const client = await pool.connect()
     console.log('ent logout, connected client');
 
-    const deviceToken = req.deviceToken
-    const username = req.username
-
-
+    
     try{
       console.log('ent try');
         await client.query('BEGIN');
@@ -114,7 +121,7 @@ const logout = async (req, res) => {
     if (userDevice.rows.length === 0) {
        return res.send({message: 'device not found'})
     }
-
+    
     const { device_id, remote_user_token_id } = userDevice.rows[0];
 
 
@@ -158,6 +165,7 @@ const logout = async (req, res) => {
         console.log('ext logout');
         client.release()
     }
+}
 }
 
 module.exports = {
