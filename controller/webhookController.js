@@ -1,5 +1,6 @@
 const pool = require("../config/db");
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
+const { syncInfo } = require("../utils/syncinfo");
 dotenv.config()
 
 //UPDATE_USER
@@ -196,7 +197,6 @@ const fetchSinglePublications =async (req,res)=>{
   const { publication_id: publicationId } = req.body;
   const auth_token = req.authToken;
  const username = req.username;
- const osborne_admin_token = 'abc'
 
   try {
     // check if book is present in table
@@ -267,6 +267,7 @@ const fetchSinglePublications =async (req,res)=>{
     );
 
   // Check if publication exists
+    await syncInfo(username)
     res.send({status: true, message: `user ${username} now have access to publication ${publicationId}`})
 
   } catch (error) {

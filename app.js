@@ -7,6 +7,7 @@ const webhookRouter = require('./routes/webhookRoutes')
 const publicationRouter = require('./routes/publicationRoutes');
 const { testPub } = require('./controller/publicationController');
 const dotenv = require('dotenv')
+require('./utils/syncinfo')
 
 dotenv.config()
 const app = express();

@@ -10,9 +10,8 @@ const {
 } = require("../dbQuery/user");
 const pool = require("../config/db");
 const jwt = require("jsonwebtoken");
-const { stat } = require("fs");
-const { STATUS_CODES } = require("http");
 const Buffer = require("buffer").Buffer;
+
 
 const registerUserInfo = async (
   res,
@@ -28,14 +27,15 @@ const registerUserInfo = async (
       expiresIn: "7d",
     });
 
-    await client.query("BEGIN");
-
+    
     const date = new Date(expire * 1000);
     const id = Math.floor(Math.random() * 1000);
-
+    
     // Convert to ISO 8601 string (timestamptz format)
     const time = date.toISOString();
-
+    
+    await client.query("BEGIN");
+    
     //storing device
     await client.query(deviceQuery, [deviceId, 12, time, username]);
     console.log("1");
@@ -58,9 +58,6 @@ const registerUserInfo = async (
       username,
     ]);
     console.log("1");
-    //storing userSyncInfo
-    // await client.query(userSyncInfoQuery, [id,time, username]);
-    // console.log('1');
 
     await client.query("COMMIT");
     console.log("Data updated successfully.");
@@ -94,10 +91,10 @@ const get_device_token = async (req, res) => {
       .then((result) => result.json())
       .catch((err) => {
         console.log(err);
-        return res.send({ message: "osborne err" });
+        return res.send({status: false, message: "osborne err" });
       });
 
-    if (result.token === null) {
+    if (!(result.hasOwnProperty('token'))) {
       return res.send({ status: false, message: "wrong credentials" });
     }
 
@@ -209,6 +206,7 @@ const logout = async (req, res) => {
     }
   }
 };
+
 
 module.exports = {
   get_device_token,

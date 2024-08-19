@@ -20,7 +20,7 @@ const deviceQuery = `INSERT INTO device
 const updateRemoteUserTokenQuery = "UPDATE remoteusertoken SET value = $1, time_expired = $2, username = $3 WHERE username = $4"
 const remoteUserTokenQuery = "INSERT INTO remoteusertoken (value, time_expired, username) VALUES ($1, $2, $3)"
 const clearRemoteTokenQuery = "DELETE FROM remoteusertoken WHERE username = $1" 
-const userSyncInfoQuery = "INSERT INTO usersyncinfo (id, last_library_sync_time, username) VALUES ($1, $2, $3)"
+const userSyncInfoQuery = "INSERT INTO usersyncinfo (username) VALUES ($1)"
 const deviceCountQuery = "SELECT * FROM device WHERE username = $1"
 const findAuthTokenQuery = "SELECT * FROM remoteusertoken WHERE username = $1 ORDER BY created_at DESC LIMIT 1"
 
