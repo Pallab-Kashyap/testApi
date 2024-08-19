@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { userSyncInfoQuery } = require('../dbQuery/user');
 const schedule = require('node-schedule');
+const pool = require('../config/db')
 
 
 const scheduledJob = schedule.scheduleJob('46 19 * * *', async () => {
@@ -22,7 +23,7 @@ scheduledJob.tz = 'Asia/Kolkata';
 
 
 const syncInfo = async (username) => {
-        await client.query(userSyncInfoQuery, [username]);
+        await pool.query(userSyncInfoQuery, [username]);
 }
 
 

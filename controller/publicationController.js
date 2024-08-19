@@ -105,19 +105,19 @@ const fetchPublications = async (req, res) => {
       await syncInfo(username);
 
       await client.query("COMMIT");
-      console.log(
-        "Publications stored and reader mappings updated successfully."
-      );
+      console.log('commited');
       return res.send(response.results);
     } else {
       return res.send({ message: "no publications found" });
     }
   } catch (err) {
     await client.query("ROLLBACK");
+    console.log('rollback');
     console.log(err);
     return res.status(500).json({ msg: "failed to fetch data" });
   } finally {
     client.release();
+    console.log('relesed');
   }
 };
 const fetchSinglePublications = async (req, res) => {
