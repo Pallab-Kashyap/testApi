@@ -4,7 +4,7 @@ const findUserQuery = "SELECT * FROM users WHERE username = $1"
 const userTokenQuery = `INSERT INTO usertoken 
                         (value, username, time_created, time_expired, device_id)
                         VALUES ($1, $2, $3, $4, $5)
-                        ON CONFLICT (value) DO UPDATE SET
+                        ON CONFLICT (device_id) DO UPDATE SET
                             value = EXCLUDED.value,
                             username = EXCLUDED.username,
                             time_created = EXCLUDED.time_created,
