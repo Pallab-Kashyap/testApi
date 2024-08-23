@@ -247,14 +247,15 @@ const fetchSinglePublications =async (req,res)=>{
         );
 
         const publication = insertResult.rows[0];
-
+        console.log('hereeeeeeeeeeeeeeee');
         // Insert data into publicationreader table
         await pool.query(
           `INSERT INTO publicationreader (username, publication_id, updated_at)
-           VALUES ($1, $2, to_timestamp($3))`,
+           VALUES ($1, $2, to_timestamp($3)) 
+           ON CONFLICT (username, publication_id) 
+           DO UPDATE SET updated_at = EXCLUDED.updated_at`,
            [ username , publication.url_id , Date.now() / 1000]
         );
-
 
       return res.status(200).json({status: true, message: "success"});
     }
@@ -262,7 +263,9 @@ const fetchSinglePublications =async (req,res)=>{
     //book found in MAS DB
     await pool.query(
       `INSERT INTO publicationreader (username, publication_id)
-       VALUES ($1, $2)`,
+       VALUES ($1, $2)
+        ON CONFLICT (username, publication_id) 
+        DO NOTHING`,
        [ username , bookCheckResult.rows[0].url_id]
     );
 
